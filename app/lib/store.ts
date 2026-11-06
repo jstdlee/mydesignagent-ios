@@ -152,15 +152,22 @@ export async function refreshLibrary(force = false) {
   }
 }
 
-// A new query, filter, sort or server fetches again, typing settling for 200 ms first.
+// A new server fetches at once; a new query, filter or sort fetches again once typing has
+// settled for 200 ms.
 let queryTimer: ReturnType<typeof setTimeout> | undefined;
+let lastBackend: Backend | null = null;
 effect(() => {
   query();
   typeFilter();
   sort();
-  backend();
+  const b = backend();
   clearTimeout(queryTimer);
-  queryTimer = setTimeout(() => untracked(() => refreshLibrary(true)), 200);
+  if (b !== lastBackend) {
+    lastBackend = b;
+    untracked(() => refreshLibrary(true));
+  } else {
+    queryTimer = setTimeout(() => untracked(() => refreshLibrary(true)), 200);
+  }
 });
 
 // ---------------------------------------------------------------------------------------------

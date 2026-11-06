@@ -7,7 +7,7 @@ const DESKTOP = { platform: "macos", width: 1280, height: 800, storage: DEMO } a
 describe("desktop", () => {
   test("the library stays beside the selected artifact", async () => {
     const app = await open("./App.tsx", DESKTOP);
-    await app.waitFor("id:sidebar");
+    await app.waitFor("Offline mode");
     expect(app.shows("Select an artifact")).toBe(true);
     await app.press("Offline mode");
     await app.waitFor("Should queued comments be editable before they are sent?");

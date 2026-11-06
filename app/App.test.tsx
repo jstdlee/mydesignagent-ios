@@ -82,6 +82,7 @@ describe("library", () => {
 describe("artboard", () => {
   test("picks an option and submits the round", async () => {
     const app = await open("./App.tsx", { storage: DEMO });
+    await app.waitFor("Library row density");
     await app.press("Library row density");
     await app.waitFor("id:pick-q1-b");
     await app.press("id:pick-q1-b");
@@ -94,6 +95,7 @@ describe("artboard", () => {
 
   test("a comment on an option shows under its question", async () => {
     const app = await open("./App.tsx", { storage: DEMO });
+    await app.waitFor("Library row density");
     await app.press("Library row density");
     await app.waitFor("id:comment-q1-a");
     await app.press("id:comment-q1-a");
@@ -106,6 +108,7 @@ describe("artboard", () => {
 describe("document", () => {
   test("comments on a block and edits another in place", async () => {
     const app = await open("./App.tsx", { storage: DEMO });
+    await app.waitFor("Offline mode");
     await app.press("Offline mode");
     await app.waitFor("Should queued comments be editable before they are sent?");
     await app.press("Should queued comments be editable before they are sent?");
@@ -127,6 +130,7 @@ describe("document", () => {
 describe("verify", () => {
   test("a rejection needs a note; a pass shows at once", async () => {
     const app = await open("./App.tsx", { storage: DEMO });
+    await app.waitFor("Library screen");
     await app.press("Library screen");
     await app.waitFor("id:pass-g1");
     await app.press("id:pass-g1");

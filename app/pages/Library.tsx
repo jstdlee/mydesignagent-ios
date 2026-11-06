@@ -9,8 +9,8 @@ import { connection, useDemo } from "../lib/store";
 import { openSettings } from "../nav";
 
 export function LibraryPage() {
-  const searchButton = () => (
-    <Button onPress={openPalette} accessibilityLabel="Search" testID="open-palette" class="active:opacity-60">
+  const searchButton = (testID: string) => (
+    <Button onPress={openPalette} accessibilityLabel="Search" testID={testID} class="active:opacity-60">
       <Text class="text-primary">Search</Text>
     </Button>
   );
@@ -18,8 +18,8 @@ export function LibraryPage() {
     <NavPage
       title="Library"
       headerLargeTitle
-      header={<Header title="Library" right={searchButton()} />}
-      headerRight={searchButton()}
+      header={<Header title="Library" right={searchButton("open-palette-header")} />}
+      headerRight={searchButton("open-palette")}
       ios={{ headerRightSymbol: "magnifyingglass" }}
     >
       <If when={connection()} else={<Welcome />}>
