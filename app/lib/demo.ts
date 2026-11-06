@@ -191,7 +191,7 @@ export function createDemoBackend(start = Date.parse("2026-11-06T09:00:00Z")): B
   }
 
   const full = (e: Entry): ArtifactReply => ({
-    artifact: { ...summarize(e), content: content(e), feedback: structuredClone(e.feedback) } as Artifact,
+    artifact: { ...summarize(e), content: content(e), feedback: JSON.parse(JSON.stringify(e.feedback)) as Feedback } as Artifact,
     revision: String(e.rev),
   });
 

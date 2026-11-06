@@ -44,7 +44,7 @@ export function DocumentView(props: { artifact: Artifact }) {
               <View class="gap-2">
                 <Button
                   onPress={() => selected.set(block())}
-                  accessibilityHint="Comment on or edit this block"
+                  accessibilityLabel={`${block().text.slice(0, 120)}. Comment or edit`}
                   testID={`block-${block().id}`}
                   class={`rounded-lg px-2 py-1.5 active:bg-muted ${commentsOn(block()).some((c) => !c.resolved) ? "bg-primary/10" : ""}`}
                 >

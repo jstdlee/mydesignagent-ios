@@ -61,7 +61,7 @@ export function rowMenu(item: ArtifactSummary) {
         showToast(`Copied ${item.type}/${item.slug}`);
       },
     },
-    link && { label: "Open in browser", onSelect: () => openUrl(link) },
+    link ? { label: "Open in browser", onSelect: () => openUrl(link) } : null,
     { type: "separator" as const },
     { label: `Show only ${TYPE_LABEL[item.type].toLowerCase()}s`, onSelect: () => setLibraryType(item.type) },
   ];
@@ -136,12 +136,15 @@ export function LibraryBrowser(props: { selectedId?: string | null; dense?: bool
           testID="library-list"
         >
           {(item) => (
+            // A Button takes presses; the View around it hears right clicks for the context menu.
+            <View
+              onContextMenu={(e: { pagePosition: { x: number; y: number } }) => {
+                if (hasDesktopMenus) Menu.popup(rowMenu(item()), e.pagePosition);
+              }}
+            >
             <Button
               onPress={() => openArtifact(item())}
               selected={props.selectedId === item().id}
-              onContextMenu={(e) => {
-                if (hasDesktopMenus) Menu.popup(rowMenu(item()), e.pagePosition);
-              }}
               class={`flex-row items-center gap-3 border-b border-border active:bg-muted hover:bg-muted selected:bg-primary/15 ${props.dense ? "px-3 py-2" : "px-4 py-3"}`}
             >
               <TypeTile mark={TYPE_MARK[item().type]} />
@@ -165,6 +168,7 @@ export function LibraryBrowser(props: { selectedId?: string | null; dense?: bool
                 <Badge label={String(item().stats.comments)} tone="accent" />
               </If>
             </Button>
+            </View>
           )}
         </List>
       </If>
