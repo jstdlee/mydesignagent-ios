@@ -1,0 +1,11 @@
+{
+  "name": "design-agent-dev",
+  "owner": { "name": "jstdlee" },
+  "plugins": [
+    {
+      "name": "design-agent",
+      "source": "./",
+      "description": "Design-first agent skills and the artifacts workbench reviewed in the Design Agent iOS app."
+    }
+  ]
+}

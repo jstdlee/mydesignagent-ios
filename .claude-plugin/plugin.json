@@ -1,0 +1,9 @@
+{
+  "name": "design-agent",
+  "version": "0.1.0",
+  "description": "A design-first workflow for coding agents: brainstorm, decide on artboards, spec, build under TDD, verify UI side by side - reviewed in the Design Agent iOS app.",
+  "author": { "name": "jstdlee" },
+  "homepage": "https://github.com/jstdlee/mydesignagent-ios",
+  "license": "MIT",
+  "keywords": ["skills", "design", "artifacts", "tdd", "ios"]
+}

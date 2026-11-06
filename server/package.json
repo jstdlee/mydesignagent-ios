@@ -1,0 +1,20 @@
+{
+  "name": "designagent-artifacts",
+  "version": "0.1.0",
+  "description": "Local artifacts workbench for coding agents: artboards, documents, live HTML pages and UI verification, served to the Design Agent iOS app.",
+  "type": "module",
+  "bin": {
+    "designagent-artifacts": "bin/designagent-artifacts.js"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "license": "MIT"
+}
