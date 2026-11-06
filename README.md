@@ -10,9 +10,9 @@ Design Agent has three parts:
 - **The artifacts workbench** (`server/`, `npx designagent-artifacts`): a local server that
   serves every project's artboards, documents, live HTML pages and verify rounds, and hands
   the person's answers back to the agent.
-- **The iOS app** (`app/`): a native iPhone and iPad client built with
-  [Native Shell](https://nsh.dev) in TSX - UIKit views, the system's text input, native
-  navigation and sheets.
+- **The app** (`app/`): one [Native Shell](https://nsh.dev) TSX codebase that runs as a native
+  iPhone and iPad app (UIKit) and as a desktop app on macOS (AppKit), Windows (Win32) and
+  Linux (GTK 4).
 
 ## What you can do in the app
 
@@ -24,6 +24,7 @@ Design Agent has three parts:
 | **Live page** | One-page test benches with sliders and switches. Control values persist across the agent's rewrites. A Web Component kit (`/kit.js`) gives agents ready controls. |
 | **Verify** | The built UI next to the approved design - side by side on iPad, switchable on iPhone. Pass a group, or reject it with a note; pin comments on the built side. |
 | **Demo** | A built-in workbench to try everything without a computer. |
+| **Desktop** | On macOS, Windows and Linux: a title bar of the app's own with search and the connection status, the library in a sidebar beside the open artifact, an application menu (File, Edit, View filters ⌘1–⌘5, sort, Go to next/previous artifact ⌥⌘↓/↑, ⌘K, ⌘R, ⌘,), right-click menus on library rows (open, copy id, copy the CLI reference, open in browser), hover states, and the window title following the open artifact. Narrow windows fall back to the phone's navigation stack, keeping what was open. |
 
 ## Quick start
 
@@ -78,17 +79,25 @@ nsh test app                       # headless flows: demo workbench and a stubbe
 nsh run app --target ios           # iOS simulator (macOS with Xcode)
 nsh run app --target catalyst      # an iPhone-sized window on a Mac
 nsh package app --target ios       # an .ipa for devices
+
+# Desktop
+nsh run app                        # this machine's desktop backend: AppKit, Win32 or GTK 4
+nsh package app --target macos     # a .app (macOS 14+)
+nsh package app --target windows   # Windows 10 1809+
+nsh package app --target linux     # GTK 4.14+
 ```
 
 Layout of the app:
 
 ```text
 app/
-  App.tsx            root: navigation stack, toast, live sync
+  App.tsx            root: phone stack or desktop shell, palette, toast, live sync
   nav.ts             routes
   lib/               types, the Backend seam (HTTP and demo), state, Markdown blocks
   components/        buttons, web frame with pixel pins, comment composer, ⌘K palette
-  pages/             Library, Artifact (Artboard, Document, Live page, Verify), Settings
+  pages/             Library, Artifact (Artboard, Document, Live page, Verify), Settings,
+                     DesktopShell (sidebar + detail pane)
+  lib/desktop.ts     window title bar, size and title; the application menu
   *.test.tsx|ts      nsh test
 ```
 

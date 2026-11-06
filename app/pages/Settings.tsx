@@ -1,14 +1,23 @@
 // Pairing: the address and key `designagent-artifacts pair` prints on the computer, typed in
 // or pasted as a designagent://pair link. The key is checked against the server before it is saved.
-import { Clipboard, Scroll, signal, Text, View } from "nsh";
+import { Clipboard, platform, Scroll, signal, Text, View } from "nsh";
 import { Input, NavPage } from "nsh/base";
 import { Header } from "../components/Header";
 import { PrimaryButton, SecondaryButton, SectionTitle } from "../components/ui";
 import { parsePairingLink } from "../lib/backend";
 import { connect, connection, disconnect, refreshLibrary, serverInfo, useDemo } from "../lib/store";
-import { nav } from "../nav";
+import { closeSettings } from "../nav";
 
 export function SettingsPage() {
+  return (
+    <NavPage title="Connection" header={<Header title="Connection" />}>
+      <SettingsForm />
+    </NavPage>
+  );
+}
+
+/** The pairing form: the stack's Connection page, and the desktop pane's. */
+export function SettingsForm() {
   const address = signal(connection()?.mode === "server" ? (connection()?.url ?? "") : "");
   const key = signal(connection()?.mode === "server" ? (connection()?.key ?? "") : "");
   const error = signal("");
@@ -20,7 +29,7 @@ export function SettingsPage() {
     const problem = await connect(address(), key());
     busy.set(false);
     if (problem) error.set(problem);
-    else nav.pop();
+    else closeSettings();
   };
 
   const paste = async () => {
@@ -41,9 +50,8 @@ export function SettingsPage() {
   };
 
   return (
-    <NavPage title="Connection" header={<Header title="Connection" />}>
       <Scroll class="flex-1" keyboardDismissMode="interactive">
-        <View class="gap-6 p-4 pb-16">
+        <View class={`w-full max-w-xl gap-6 p-4 pb-16 ${platform.desktop ? "self-center pt-8" : ""}`}>
           <View class="gap-1">
             <Text class="text-base font-medium text-foreground" testID="connection-status">
               {status()}
@@ -95,7 +103,7 @@ export function SettingsPage() {
               label="Use the demo workbench"
               onPress={() => {
                 useDemo();
-                nav.pop();
+                closeSettings();
               }}
               testID="use-demo"
             />
@@ -106,6 +114,5 @@ export function SettingsPage() {
           </View>
         </View>
       </Scroll>
-    </NavPage>
   );
 }

@@ -33,3 +33,37 @@ jobs:
         run: nsh check app
       - name: Headless tests
         run: nsh test app
+
+  desktop:
+    name: Desktop package (${{ matrix.target }})
+    needs: app
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            target: linux
+          - os: macos-14
+            target: macos
+          - os: windows-latest
+            target: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install NSH (macOS, Linux)
+        if: runner.os != 'Windows'
+        run: |
+          curl -fsSL https://nsh.dev/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install NSH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          irm https://nsh.dev/install.ps1 | iex
+          Add-Content $env:GITHUB_PATH "$env:LOCALAPPDATA\nsh\bin"
+      - name: Package
+        run: nsh package app --target ${{ matrix.target }} -o dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: design-agent-${{ matrix.target }}
+          path: dist
