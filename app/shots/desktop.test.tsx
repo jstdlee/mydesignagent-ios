@@ -64,3 +64,17 @@ test("first run", async () => {
   await app.waitFor("Review what your agent designs");
   await shot(app, "desktop-09-welcome");
 }, T);
+
+test("every sidebar row opens its own artifact", async () => {
+  const app = await demo();
+  for (const [title, ready] of [
+    ["Library row density", "id:pick-q1-b"],
+    ["Offline mode", "Should queued comments be editable before they are sent?"],
+    ["Corner radius bench", "id:live-page"],
+    ["Library screen", "id:pass-g1"],
+    ["Library row density", "id:pick-q1-b"],
+  ]) {
+    await app.press(`id:sidebar >> text:${title}`);
+    await app.waitFor(ready);
+  }
+}, T);
