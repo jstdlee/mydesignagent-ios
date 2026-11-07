@@ -131,51 +131,30 @@ export function LibraryBrowser(props: { selectedId?: string | null; dense?: bool
           </If>
         }
       >
-        <List
-          each={items()}
-          keyExtractor={(a: ArtifactSummary) => a.id}
-          estimatedItemSize={props.dense ? 68 : 84}
-          onRefresh={() => refreshLibrary(true)}
-          refreshing={isLoadingLibrary()}
-          class="mt-2 flex-1"
-          testID="library-list"
+        <If
+          when={!props.dense}
+          else={
+            // The desktop sidebar: a plain scroll view. NSH's List on macOS (0.4) maps rows
+            // upside down for hit-testing, and a library is small enough not to need recycling.
+            <Scroll class="mt-2 flex-1" testID="library-list">
+              <Each of={items()} key={(a: ArtifactSummary) => a.id}>
+                {(item) => <Row item={item()} selectedId={props.selectedId} dense />}
+              </Each>
+            </Scroll>
+          }
         >
-          {(item) => (
-            // A Button takes presses; the View around it hears right clicks for the context menu.
-            <View
-              onContextMenu={(e: { pagePosition: { x: number; y: number } }) => {
-                if (hasDesktopMenus) Menu.popup(rowMenu(item()), e.pagePosition);
-              }}
-            >
-            <Button
-              onPress={() => openArtifact(item())}
-              selected={props.selectedId === item().id}
-              class={`flex-row items-center gap-3 border-b border-border active:bg-muted hover:bg-muted selected:bg-primary/15 ${props.dense ? "px-3 py-2" : "px-4 py-3"}`}
-            >
-              <TypeTile mark={TYPE_MARK[item().type]} />
-              <View class="flex-1 gap-0.5">
-                <Text class="font-medium text-foreground" style={{ numberOfLines: 1 }}>
-                  {item().title}
-                </Text>
-                <Text class="text-xs text-muted-foreground" style={{ numberOfLines: 1 }}>
-                  {TYPE_LABEL[item().type]} · {item().project.name} · {relativeTime(item().updatedAt)}
-                </Text>
-                <If when={!props.dense}>
-                  <Text class="text-sm text-muted-foreground" style={{ numberOfLines: 1 }}>
-                    {item().preview}
-                  </Text>
-                </If>
-              </View>
-              <If when={item().stats.rejected > 0}>
-                <Badge label={`${item().stats.rejected} rejected`} tone="danger" />
-              </If>
-              <If when={item().stats.comments > 0 && item().stats.rejected === 0}>
-                <Badge label={String(item().stats.comments)} tone="accent" />
-              </If>
-            </Button>
-            </View>
-          )}
-        </List>
+          <List
+            each={items()}
+            keyExtractor={(a: ArtifactSummary) => a.id}
+            estimatedItemSize={84}
+            onRefresh={() => refreshLibrary(true)}
+            refreshing={isLoadingLibrary()}
+            class="mt-2 flex-1"
+            testID="library-list"
+          >
+            {(item) => <Row item={item()} selectedId={props.selectedId} />}
+          </List>
+        </If>
       </If>
     </View>
   );
@@ -188,5 +167,44 @@ function FilterChips() {
         <Chip label={filter().label} selected={libraryType() === filter().type} onPress={() => setLibraryType(filter().type)} testID={`filter-${filter().label}`} />
       )}
     </Each>
+  );
+}
+
+/** One artifact in the library; on desktops a right click opens its context menu. */
+function Row(props: { item: ArtifactSummary; selectedId?: string | null; dense?: boolean }) {
+  // The Button takes presses; the View around it hears right clicks.
+  return (
+    <View
+      onContextMenu={(e: { pagePosition: { x: number; y: number } }) => {
+        if (hasDesktopMenus) Menu.popup(rowMenu(props.item), e.pagePosition);
+      }}
+    >
+      <Button
+        onPress={() => openArtifact(props.item)}
+        selected={props.selectedId === props.item.id}
+        class={`flex-row items-center gap-3 border-b border-border active:bg-muted hover:bg-muted selected:bg-primary/15 ${props.dense ? "px-3 py-2" : "px-4 py-3"}`}
+      >
+        <TypeTile mark={TYPE_MARK[props.item.type]} />
+        <View class="flex-1 gap-0.5">
+          <Text class="font-medium text-foreground" style={{ numberOfLines: 1 }}>
+            {props.item.title}
+          </Text>
+          <Text class="text-xs text-muted-foreground" style={{ numberOfLines: 1 }}>
+            {TYPE_LABEL[props.item.type]} · {props.item.project.name} · {relativeTime(props.item.updatedAt)}
+          </Text>
+          <If when={!props.dense}>
+            <Text class="text-sm text-muted-foreground" style={{ numberOfLines: 1 }}>
+              {props.item.preview}
+            </Text>
+          </If>
+        </View>
+        <If when={props.item.stats.rejected > 0}>
+          <Badge label={`${props.item.stats.rejected} rejected`} tone="danger" />
+        </If>
+        <If when={props.item.stats.comments > 0 && props.item.stats.rejected === 0}>
+          <Badge label={String(props.item.stats.comments)} tone="accent" />
+        </If>
+      </Button>
+    </View>
   );
 }
