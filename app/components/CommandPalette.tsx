@@ -2,7 +2,7 @@
 // command. Opened from the library's search button, or ⌘K on a hardware keyboard.
 import { platform, signal, Text, View } from "nsh";
 import { Button, Input, Sheet } from "nsh/base";
-import { TYPE_LABEL, TYPE_MARK } from "../lib/format";
+import { TYPE_LABEL, TYPE_MARK, TYPE_PLURAL } from "../lib/format";
 import { library, refreshLibrary, setLibraryType } from "../lib/store";
 import type { ArtifactSummary, ArtifactType } from "../lib/types";
 import { openArtifact, openSettings } from "../nav";
@@ -19,7 +19,7 @@ const COMMANDS: Command[] = [
   { id: "settings", label: "Connection settings", run: openSettings },
   ...(["artboard", "document", "html", "verify"] as ArtifactType[]).map((type) => ({
     id: `filter-${type}`,
-    label: `Show only ${TYPE_LABEL[type].toLowerCase()}s`,
+    label: `Show only ${TYPE_PLURAL[type]}`,
     run: () => setLibraryType(type),
   })),
   { id: "filter-all", label: "Show everything", run: () => setLibraryType(null) },

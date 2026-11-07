@@ -15,6 +15,9 @@ export const TYPE_SYMBOL: Record<ArtifactType, string> = {
   verify: "checkmark.seal",
 };
 
+/** The type in a sentence, plural: "artboards", "live pages", "verify rounds". */
+export const TYPE_PLURAL: Record<ArtifactType, string> = { artboard: "artboards", document: "documents", html: "live pages", verify: "verify rounds" };
+
 /** A one-letter mark drawn in the type's tile, readable without icons. */
 export const TYPE_MARK: Record<ArtifactType, string> = { artboard: "A", document: "D", html: "H", verify: "V" };
 

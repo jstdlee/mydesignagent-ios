@@ -26,6 +26,27 @@ Design Agent has three parts:
 | **Demo** | A built-in workbench to try everything without a computer. |
 | **Desktop** | On macOS, Windows and Linux: a title bar of the app's own with search and the connection status, the library in a sidebar beside the open artifact, an application menu (File, Edit, View filters ⌘1–⌘5, sort, Go to next/previous artifact ⌥⌘↓/↑, ⌘K, ⌘R, ⌘,), right-click menus on library rows (open, copy id, copy the CLI reference, open in browser), hover states, and the window title following the open artifact. Narrow windows fall back to the phone's navigation stack, keeping what was open. |
 
+## Screenshots
+
+Taken by CI on an iPhone 16 Pro Max simulator, macOS and Linux (GTK), from the demo workbench
+(`app/shots/`).
+
+| Library | Artboard | Document | Comment |
+|---|---|---|---|
+| <img src="docs/screenshots/phone-01-library.png" width="200"> | <img src="docs/screenshots/phone-02-artboard.png" width="200"> | <img src="docs/screenshots/phone-04-document.png" width="200"> | <img src="docs/screenshots/phone-06-comment-composer.png" width="200"> |
+
+| Verify | Connection (dark) |
+|---|---|
+| <img src="docs/screenshots/phone-08-verify.png" width="200"> | <img src="docs/screenshots/phone-11-connection-dark.png" width="200"> |
+
+Desktop: verify side by side on Linux, the ⌘K palette, and a document on macOS.
+
+<img src="docs/screenshots/desktop-04-verify.png" width="820">
+
+<img src="docs/screenshots/desktop-06-palette.png" width="820">
+
+<img src="docs/screenshots/desktop-03-document.png" width="820">
+
 ## Quick start
 
 On the computer that runs your agent (Node 20+), install the command once from this
@@ -78,6 +99,7 @@ nsh check app                      # TypeScript, with NSH's generated declaratio
 nsh test app                       # headless flows: demo workbench and a stubbed server
 nsh run app --target ios           # iOS simulator (macOS with Xcode)
 nsh run app --target catalyst      # an iPhone-sized window on a Mac
+nsh test app/shots/phone.test.tsx --target ios      # screenshots into screenshots/
 nsh package app --target ios       # an .ipa for devices
 
 # Desktop

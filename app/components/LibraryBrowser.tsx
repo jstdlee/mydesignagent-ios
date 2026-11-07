@@ -3,7 +3,7 @@
 import { Clipboard, List, openUrl, Scroll, Text, View } from "nsh";
 import { Button, Input } from "nsh/base";
 import { isAvailable as hasDesktopMenus, Menu } from "nsh/desktop";
-import { plural, relativeTime, TYPE_FILTERS, TYPE_LABEL, TYPE_MARK } from "../lib/format";
+import { plural, relativeTime, TYPE_FILTERS, TYPE_LABEL, TYPE_MARK, TYPE_PLURAL } from "../lib/format";
 import {
   connection,
   isLoadingLibrary,
@@ -63,7 +63,7 @@ export function rowMenu(item: ArtifactSummary) {
     },
     link ? { label: "Open in browser", onSelect: () => openUrl(link) } : null,
     { type: "separator" as const },
-    { label: `Show only ${TYPE_LABEL[item.type].toLowerCase()}s`, onSelect: () => setLibraryType(item.type) },
+    { label: `Show only ${TYPE_PLURAL[item.type]}`, onSelect: () => setLibraryType(item.type) },
   ];
 }
 
@@ -99,7 +99,7 @@ export function LibraryBrowser(props: { selectedId?: string | null; dense?: bool
         <View class="flex-row items-center justify-between">
           <Text class="text-sm text-muted-foreground">
             {plural(items().length, "artifact")}
-            {library() ? ` · ${plural(library()?.projects.length ?? 0, "project")}` : ""}
+            {library() && !props.dense ? ` · ${plural(library()?.projects.length ?? 0, "project")}` : ""}
           </Text>
           <View class="flex-row items-center gap-4">
             <Button onPress={nextSort} accessibilityLabel={`Sort: ${sortLabel()}`} testID="sort" class="active:opacity-60 hover:opacity-80">
