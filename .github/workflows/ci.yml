@@ -104,6 +104,16 @@ jobs:
           else
             nsh test ${{ matrix.tests }} --target ${{ matrix.target }}
           fi
+      - name: Print screenshots into the log (base64, for reviewers without artifact access)
+        if: always()
+        run: |
+          [ "${{ runner.os }}" = macOS ] && for f in screenshots/*.png; do sips -Z 1400 "$f" >/dev/null; done
+          for f in screenshots/*.png; do
+            [ -f "$f" ] || continue
+            echo "=====BEGIN $(basename "$f")====="
+            python3 -c "import base64,sys,textwrap;print(textwrap.fill(base64.b64encode(open(sys.argv[1],'rb').read()).decode(),100))" "$f"
+            echo "=====END $(basename "$f")====="
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:

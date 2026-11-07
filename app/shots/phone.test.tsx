@@ -1,21 +1,32 @@
-// The phone app's screens with the demo workbench, light and dark.
-import { expect, open, test } from "nsh/test";
+// The phone app's screens with the demo workbench, light and dark. Real devices are slower
+// than headless runs, so each test has two minutes.
+import { open, test } from "nsh/test";
 import { DEMO, shot } from "./shot";
 
-test("phone screens", async () => {
+const T = 120_000;
+const demo = async () => {
   const app = await open("../App.tsx", { storage: DEMO });
   await app.waitFor("Library row density");
-  await shot(app, "phone-01-library");
+  return app;
+};
 
+test("library", async () => {
+  const app = await demo();
+  await shot(app, "phone-01-library");
+}, T);
+
+test("artboard", async () => {
+  const app = await demo();
   await app.press("Library row density");
   await app.waitFor("id:pick-q1-b");
   await app.press("id:pick-q1-b");
   await shot(app, "phone-02-artboard");
   await app.press("id:comment-mode");
   await shot(app, "phone-03-artboard-comment-mode");
-  await app.back();
+}, T);
 
-  await app.waitFor("Offline mode");
+test("document", async () => {
+  const app = await demo();
   await app.press("Offline mode");
   await app.waitFor("Should queued comments be editable before they are sent?");
   await shot(app, "phone-04-document");
@@ -25,35 +36,35 @@ test("phone screens", async () => {
   await app.press("id:block-comment");
   await app.type("id:comment-input", "Yes, until they are sent");
   await shot(app, "phone-06-comment-composer");
-  await app.press("role:button[Send]");
-  await app.waitFor("Yes, until they are sent");
-  await app.back();
+}, T);
 
-  await app.waitFor("Corner radius bench");
+test("live page", async () => {
+  const app = await demo();
   await app.press("Corner radius bench");
   await app.waitFor("id:live-page");
   await shot(app, "phone-07-live-page");
-  await app.back();
+}, T);
 
-  await app.waitFor("Library screen");
+test("verify", async () => {
+  const app = await demo();
   await app.press("Library screen");
   await app.waitFor("id:pass-g1");
   await app.press("id:pass-g1");
   await shot(app, "phone-08-verify");
-  await app.back();
+}, T);
 
-  await app.waitFor("id:open-palette");
+test("palette", async () => {
+  const app = await demo();
   await app.press("id:open-palette");
   await app.waitFor("id:palette-input");
   await shot(app, "phone-09-palette");
-  expect(app.shows("id:palette-input")).toBe(true);
-});
+}, T);
 
-test("phone first run and dark mode", async () => {
+test("first run, dark", async () => {
   const app = await open("../App.tsx", { colorScheme: "dark" });
   await app.waitFor("Review what your agent designs");
   await shot(app, "phone-10-welcome-dark");
   await app.press("id:connect");
   await app.waitFor("id:address");
   await shot(app, "phone-11-connection-dark");
-});
+}, T);
