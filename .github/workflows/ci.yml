@@ -126,3 +126,29 @@ jobs:
           name: screens-${{ matrix.target }}
           path: screenshots
           if-no-files-found: warn
+
+  e2e:
+    name: End to end (app ↔ real server)
+    needs: app
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install NSH
+        run: |
+          curl -fsSL https://nsh.dev/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Start the server with a project of artifacts
+        run: |
+          echo "E2E_PROJECT=$RUNNER_TEMP/project" >> "$GITHUB_ENV"
+          echo "DESIGNAGENT_SERVER_HOME=$RUNNER_TEMP/server-home" >> "$GITHUB_ENV"
+          E2E_PROJECT=$RUNNER_TEMP/project DESIGNAGENT_SERVER_HOME=$RUNNER_TEMP/server-home e2e/setup.sh
+      - name: Drive the app
+        run: nsh test e2e/app.test.tsx
+      - name: Check the agent's side
+        run: node e2e/check.mjs "$E2E_PROJECT"
+      - name: Server log
+        if: always()
+        run: cat "$DESIGNAGENT_SERVER_HOME/server.log" || true
