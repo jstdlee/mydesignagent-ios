@@ -98,6 +98,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libgtk-4-1 libwebkitgtk-6.0-4 xvfb
       - name: Run on the platform and take screenshots
         run: |
+          mkdir -p screenshots
           if [ "${{ runner.os }}" = Linux ]; then
             xvfb-run -a -s "-screen 0 1600x1000x24" nsh test ${{ matrix.tests }} --target ${{ matrix.target }}
           else
