@@ -167,7 +167,7 @@ function OptionCard(props: {
   return (
     <View class={`gap-2 rounded-2xl border-2 p-2 ${props.picked ? "border-primary" : "border-transparent"}`} style={{ width: props.width }}>
       <View class="flex-row items-center gap-2 px-1">
-        <View class="size-7 items-center justify-center rounded-full bg-muted">
+        <View class="h-7 min-w-7 items-center justify-center rounded-full bg-muted px-2">
           <Text class="text-sm font-bold text-foreground">{props.option.id}</Text>
         </View>
         <View class="flex-1">

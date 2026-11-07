@@ -1,7 +1,7 @@
 // The phone app's screens with the demo workbench, light and dark. Real devices are slower
 // than headless runs, so each test has two minutes.
 import { open, test } from "nsh/test";
-import { DEMO, shot } from "./shot";
+import { DEMO, loaded, shot } from "./shot";
 
 const T = 120_000;
 const demo = async () => {
@@ -20,6 +20,7 @@ test("artboard", async () => {
   await app.press("Library row density");
   await app.waitFor("id:pick-q1-b");
   await app.press("id:pick-q1-b");
+  await loaded(app, "frame-q1-b");
   await shot(app, "phone-02-artboard");
   await app.press("id:comment-mode");
   await shot(app, "phone-03-artboard-comment-mode");
@@ -41,7 +42,7 @@ test("document", async () => {
 test("live page", async () => {
   const app = await demo();
   await app.press("Corner radius bench");
-  await app.waitFor("id:live-page");
+  await loaded(app, "live-page");
   await shot(app, "phone-07-live-page");
 }, T);
 
@@ -49,13 +50,14 @@ test("verify", async () => {
   const app = await demo();
   await app.press("Library screen");
   await app.waitFor("id:pass-g1");
+  await loaded(app, "built-g1");
   await app.press("id:pass-g1");
   await shot(app, "phone-08-verify");
 }, T);
 
 test("palette", async () => {
   const app = await demo();
-  await app.press("id:open-palette");
+  await app.keyboard.press("mod+k"); // the header's search is a system bar button on iOS
   await app.waitFor("id:palette-input");
   await shot(app, "phone-09-palette");
 }, T);

@@ -82,15 +82,20 @@ export function LibraryBrowser(props: { selectedId?: string | null; dense?: bool
           testID="library-search"
           class={`rounded-(--radius) bg-muted px-3 text-foreground ${props.dense ? "py-1.5 text-sm" : "py-2.5"}`}
         />
-        <Scroll horizontal class={props.dense ? "-mx-3" : "-mx-4"} scrollbar={false}>
-          <View class={`flex-row gap-2 ${props.dense ? "px-3" : "px-4"}`}>
-            <Each of={TYPE_FILTERS} key={(f: (typeof TYPE_FILTERS)[number]) => f.label}>
-              {(filter) => (
-                <Chip label={filter().label} selected={libraryType() === filter().type} onPress={() => setLibraryType(filter().type)} testID={`filter-${filter().label}`} />
-              )}
-            </Each>
+        <If
+          when={props.dense}
+          else={
+            <Scroll horizontal class="-mx-4" scrollbar={false}>
+              <View class="flex-row gap-2 px-4">
+                <FilterChips />
+              </View>
+            </Scroll>
+          }
+        >
+          <View class="flex-row flex-wrap gap-1.5">
+            <FilterChips />
           </View>
-        </Scroll>
+        </If>
         <View class="flex-row items-center justify-between">
           <Text class="text-sm text-muted-foreground">
             {plural(items().length, "artifact")}
@@ -173,5 +178,15 @@ export function LibraryBrowser(props: { selectedId?: string | null; dense?: bool
         </List>
       </If>
     </View>
+  );
+}
+
+function FilterChips() {
+  return (
+    <Each of={TYPE_FILTERS} key={(f: (typeof TYPE_FILTERS)[number]) => f.label}>
+      {(filter) => (
+        <Chip label={filter().label} selected={libraryType() === filter().type} onPress={() => setLibraryType(filter().type)} testID={`filter-${filter().label}`} />
+      )}
+    </Each>
   );
 }

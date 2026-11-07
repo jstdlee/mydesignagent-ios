@@ -13,3 +13,8 @@ export async function shot(app: App, name: string) {
     if (code !== "ERR_NSH_TEST_UNSUPPORTED" && !/real platform|headless/i.test(String(error))) throw error;
   }
 }
+
+/** Waits for a web frame to load; a frame that fails or hangs fails the test with what it shows. */
+export async function loaded(app: App, frameTestID: string) {
+  await app.waitFor(`id:${frameTestID}-status`, { state: "gone", timeout: 20_000 });
+}

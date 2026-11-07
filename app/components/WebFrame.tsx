@@ -1,7 +1,7 @@
 // A web view showing one design: a page of the companion server (an artboard option, a side
 // of a verify group, a live page) or, in the demo, inline HTML. In comment mode a tap on the
 // page reports where it landed as fractions of the page, and existing comments show as pins.
-import { Text, View, WebView } from "nsh";
+import { signal, Text, View, WebView } from "nsh";
 import { webUrl } from "../lib/store";
 import type { WebSource } from "../lib/types";
 
@@ -76,6 +76,8 @@ export function WebFrame(props: {
   // A new script needs a new page load, so the frame is made again when the pins or mode change.
   const frameKey = () => `${props.commentMode ? "c" : "v"}:${(props.pins ?? []).map((p) => `${p.x},${p.y}`).join(";")}:${props.source.url ?? ""}`;
   const src = () => webUrl(props.source.url);
+  // Shown over the frame until the page loads, and in its place when it fails.
+  const status = signal<{ state: "loading" | "loaded" | "failed"; message?: string }>({ state: "loading" });
   return (
     <View
       class={`overflow-hidden rounded-(--radius) border ${props.commentMode ? "border-primary" : "border-border"} ${props.class ?? ""}`}
@@ -101,10 +103,20 @@ export function WebFrame(props: {
                 if (msg?.type === "point") props.onPoint?.(msg.x ?? 0, msg.y ?? 0);
                 else if (msg?.type === "state" && msg.values) props.onState?.(msg.values);
               }}
+              onLoadStart={() => status.set({ state: "loading" })}
+              onLoad={() => status.set({ state: "loaded" })}
+              onError={({ message }) => status.set({ state: "failed", message })}
               style={{ flex: 1 }}
             />
           )}
         </Each>
+        <If when={status().state !== "loaded"}>
+          <View class="absolute inset-0 items-center justify-center gap-1 bg-muted p-4" testID={props.testID ? `${props.testID}-status` : undefined}>
+            <Text class={status().state === "failed" ? "text-center text-sm text-destructive" : "text-sm text-muted-foreground"}>
+              {status().state === "failed" ? `Could not load this design: ${status().message ?? "unknown error"}` : "Loading…"}
+            </Text>
+          </View>
+        </If>
       </If>
     </View>
   );

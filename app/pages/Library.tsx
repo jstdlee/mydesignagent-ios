@@ -17,7 +17,6 @@ export function LibraryPage() {
   return (
     <NavPage
       title="Library"
-      headerLargeTitle
       header={<Header title="Library" right={searchButton("open-palette-header")} />}
       headerRight={searchButton("open-palette")}
       ios={{ headerRightSymbol: "magnifyingglass" }}

@@ -61,8 +61,8 @@ export function SettingsForm() {
           <View class="gap-3">
             <SectionTitle title="Pair with your computer" detail="On the computer that runs your coding agent:" />
             <View class="gap-1 rounded-(--radius) bg-muted p-3">
-              <Text class="font-mono text-sm text-foreground">npx designagent-artifacts start --host 0.0.0.0</Text>
-              <Text class="font-mono text-sm text-foreground">npx designagent-artifacts pair</Text>
+              <Text class="font-mono text-sm text-foreground">designagent-artifacts start --host 0.0.0.0</Text>
+              <Text class="font-mono text-sm text-foreground">designagent-artifacts pair</Text>
             </View>
             <Text class="text-sm text-muted-foreground">Then copy the pairing link to this phone, or type the address and key it prints. The phone and the computer need to be on the same network.</Text>
             <SecondaryButton label="Paste pairing link" onPress={paste} testID="paste-link" />

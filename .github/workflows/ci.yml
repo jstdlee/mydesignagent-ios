@@ -95,7 +95,13 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Install GTK and a display (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libgtk-4-1 libwebkitgtk-6.0-4 xvfb
+        run: |
+          sudo apt-get update && sudo apt-get install -y libgtk-4-1 libwebkitgtk-6.0-4 xvfb
+          # WebKitGTK's sandbox needs unprivileged user namespaces, which Ubuntu 24.04 restricts.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          # xvfb has no GPU: render web views without DMA-BUF and compositing.
+          echo "WEBKIT_DISABLE_DMABUF_RENDERER=1" >> "$GITHUB_ENV"
+          echo "WEBKIT_DISABLE_COMPOSITING_MODE=1" >> "$GITHUB_ENV"
       - name: Run on the platform and take screenshots
         run: |
           mkdir -p screenshots
