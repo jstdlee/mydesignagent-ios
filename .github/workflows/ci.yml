@@ -69,3 +69,43 @@ jobs:
         with:
           name: design-agent-${{ matrix.target }}
           path: dist
+
+  screens:
+    name: Screens (${{ matrix.target }})
+    needs: app
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            target: ios
+            tests: app/shots/phone.test.tsx
+          - os: macos-15
+            target: macos
+            tests: app/shots/desktop.test.tsx
+          - os: ubuntu-24.04
+            target: linux
+            tests: app/shots/desktop.test.tsx
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install NSH
+        run: |
+          curl -fsSL https://nsh.dev/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install GTK and a display (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-1 libwebkitgtk-6.0-4 xvfb
+      - name: Run on the platform and take screenshots
+        run: |
+          if [ "${{ runner.os }}" = Linux ]; then
+            xvfb-run -a -s "-screen 0 1600x1000x24" nsh test ${{ matrix.tests }} --target ${{ matrix.target }}
+          else
+            nsh test ${{ matrix.tests }} --target ${{ matrix.target }}
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-${{ matrix.target }}
+          path: screenshots
+          if-no-files-found: warn
